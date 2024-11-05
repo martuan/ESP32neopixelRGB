@@ -65,9 +65,12 @@ bool getMD5(uint8_t* data, uint16_t len, char* output) {
   unsigned char _buf[16];
 
   mbedtls_md5_init(&_ctx);
-  mbedtls_md5_starts(&_ctx);  // Change this line
-  mbedtls_md5_update(&_ctx, data, len);  // Change this line
-  mbedtls_md5_finish(&_ctx, _buf);  // Change this line
+  mbedtls_md5_starts_ret(&_ctx);
+  mbedtls_md5_update_ret(&_ctx, data, len);
+  mbedtls_md5_finish_ret(&_ctx, _buf);
+  // mbedtls_md5_starts(&_ctx);  // Change this line
+  // mbedtls_md5_update(&_ctx, data, len);  // Change this line
+  // mbedtls_md5_finish(&_ctx, _buf);  // Change this line
   mbedtls_md5_free(&_ctx);
 
   for (int i = 0; i < 16; i++) {

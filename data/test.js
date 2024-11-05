@@ -136,24 +136,6 @@ function camara(){
 
 }
 
-/*
-function cambiarColor(){
-
-
-    if(document.getElementById("GPIO1checkbox").checked == true){
-
-        document.getElementById("GPIO1table").style.color = "green";
-
-    }else{
-        document.getElementById("GPIO1table").style.color = "red";
-    }
-    
-
-
-}
-
-*/
-
 function cambiarColor() {
 
 
@@ -219,38 +201,8 @@ function interactuarConESP32(){
     xhr.send("GPIO1="+GPIO1+"&GPIO2="+GPIO2+"&GPIO3="+GPIO3+"&GPIO4="+GPIO4);
     //xhr.send(formData);
 
-
-/*
-    const formData = new FormData();
-    // add one more field
-    formData.append("GPIO", "true");
-    let xhr = new XMLHttpRequest();
-    
-    xhr.open("POST", "./ESP32");
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    //xhr.send("GPIO1="+GPIO1+"&GPIO2="+GPIO2+"&GPIO3="+GPIO3+"&GPIO4="+GPIO4);
-    xhr.send(formData);
-  */  
-
-
-
-
 }
-//crea el chart CanvasJS
-/*
-var dataPoints = [{y : 200}, {y : 10}, {y : 200}, {y : 20}, {y : 17}];
-var chart = new CanvasJS.Chart("chartContainer", {
-    title : {
-        text : "Dynamic Data"
-    },
-    data : [{
-            type : "spline",
-            //dataPoints : dataInput
-            dataPoints : dataPoints
-        }
-    ]
-});
-*/
+
 window.onload = (event) => {
     console.log("page is fully loaded");
 
@@ -322,106 +274,7 @@ function consultarEntradas(){
 
 function actualizarPagina(respuesta){
 
-    document.getElementById("lecturaInput").innerHTML = "Entradas: " + respuesta;
-
-    //Graficar valores en Chart CanvasJS
-
-    
-    //var dataPoints = [{y : 0}];
-    
-    //var dataInput = document.getElementById("lecturaInput").value;
-    //var dataInput = respuesta;
-    //var yVal = dataInput, updateCount = 0;
-    //var updateCount = 0;
-    /*
-    var chart = new CanvasJS.Chart("chartContainer", {
-            title : {
-                text : "Dynamic Data"
-            },
-            data : [{
-                    type : "spline",
-                    //dataPoints : dataInput
-                    dataPoints : dataPoints
-                }
-            ]
-        });
-        */
-       /*
-    updateCount++;
-    
-    dataPoints.push({
-        y : respuesta//yVal
-    });
-    
-    chart.options.title.text = "Update " + updateCount;
-
-    chart.render();
-    */
-/*
-    var dps = [];
-    var chart3 = new CanvasJS.Chart("chartContainer", {
-      exportEnabled: true,
-      title :{
-        text: "Temperatura promedio"
-      },
-      axisY: {
-        includeZero: false
-      },
-      data: [{
-        //type: "spline",
-        type: "line",
-        markerSize: 0,
-        dataPoints: dps 
-      }]
-    });
-      
-    var xVal = 0;
-    var yVal = 100;
-    var updateInterval = 1000;
-    var dataLength = 200; // number of dataPoints visible at any point
-
-    var updateChart = function (count) {
-        //count = count || 1;
-        // count is number of times loop runs to generate random dataPoints.
-        //for (var j = 0; j < count; j++) {	
-          yVal = yVal + Math.round(5 + Math.random() *(-5-5));
-          
-          //yVal = promedioTemp;
-          //yVal = parseInt(respuesta);
-          console.log("yVal = " + yVal);
-          dps.push({
-            x: xVal,
-            y: yVal
-          });
-          xVal++;
-        //}
-        if (dps.length > dataLength) {
-          dps.shift();
-        }
-        chart3.render();
-      };
-      
-      updateChart(dataLength); 
-      setInterval(function(){ updateChart() }, updateInterval); 
-      */
-/*
-    var yVal = dataInput, updateCount = 0;
-    var updateChart = function () {
-
-        //yVal = yVal + Math.round(5 + Math.random() * (-5 - 5));
-        updateCount++;
-        
-        dataPoints.push({
-            y : yVal
-        });
-        
-        chart.options.title.text = "Update " + updateCount;
-        chart.render();    
-        
-    };
-*/
-    // update chart every second
-    //setInterval(function(){updateChart()}, 1000);
+    document.getElementById("lecturaInput").innerHTML = "Entradas: " + respuesta;  
 
 }
 
@@ -529,4 +382,20 @@ function stopContinuousPhoto(){
     clearInterval(intervalID);
     intervalID = null;
     */
+}
+
+function cambiarColoresRGB(){
+
+
+    window.location.href = "/cambiarColoresRGB";
+
+
+}
+
+function encenderRuletaRGB(){
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', "/encenderRuletaRGB", true);
+    xhr.send();
+
 }

@@ -6,6 +6,12 @@
 AsyncWebServer server(80);
 boolean takeNewPhoto = false;
 boolean fotoContinua = false;
+int r = 0; 
+int g = 0;
+int b = 0;
+boolean encenderRuleta = false;
+boolean cambiarColoresForm = false;
+
 // Photo File Name to save in SPIFFS
 
 
@@ -26,91 +32,28 @@ void urls(void){
   });
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    cambiarColoresForm = false;
     request->send(SPIFFS, "/index.html", "text/html");
   });
-  server.on("/camara", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/camara.html", "text/html");
-  });
-
-  server.on("/capture", HTTP_GET, [](AsyncWebServerRequest * request) {
-    takeNewPhoto = true;
-    request->send_P(200, "text/plain", "Taking Photo");
-  });
-
-  server.on("/captureCont", HTTP_GET, [](AsyncWebServerRequest * request) {
-    fotoContinua = true;
-    request->send_P(200, "text/plain", "Taking Continuous Photo");
-  });
-
-  server.on("/stopCaptureCont", HTTP_GET, [](AsyncWebServerRequest * request) {
-    fotoContinua = false;
-    request->send_P(200, "text/plain", "Taking Continuous Photo");
-  });
-
-  server.on("/saved-photo", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, FILE_PHOTO, "image/jpg", false);
-  });
 
 
-  
-  server.on("/ESP32", HTTP_ANY, [](AsyncWebServerRequest *request){
-
-  /*  
-    Serial.println("/ESP32");
-
-    if(request->hasArg("fname")){
-      
-      Serial.println("Tiene argumentos en la solicitud");
-
-      for(int i=0;i<2;i++){
- 
-      AsyncWebParameter* param = request->getParam(i);
-  
-      Serial.print("Param name: ");
-      Serial.println(param->name());
-  
-      Serial.print("Param value: ");
-      Serial.println(param->value());
-  
-      Serial.println("------");
-
-      if(param->value() == "LED_ON"){
-
-          Serial.println("LED_ON");
-          digitalWrite(LED_BUILTIN, HIGH);
-
-      }
-      if(param->value() == "LED_OFF"){
-
-          Serial.println("LED_OFF");
-          digitalWrite(LED_BUILTIN, LOW);
-
-      }
-    }
-    //String param1;
-
-    //param1 = request->getParam().value();
+  server.on("/cambiarColoresRGB", HTTP_ANY, [](AsyncWebServerRequest *request){
 
 
-    //request->send(SPIFFS, "/ESP32.html", "text/html");
-*/
-
-    
-
-    //}
-
+    cambiarColoresForm = true;
     int pin, valor;
+    String valorStr;
 
     //request->send(SPIFFS, "/ESP32.html", "text/html");
-    Serial.println("/ESP32");
+    Serial.println("/cambiarColoresRGB");
 
     //if(request->args() > 0){//chequea que tenga al menos un argumento recibido
-    if(request->hasArg("GPIO1") || request->hasArg("GPIO19")){//chequea que tenga al menos un argumento recibido
+    if(request->hasArg("redComp") || request->hasArg("greenComp") || request->hasArg("blueComp")){//chequea que tenga al menos un argumento recibido
     //request->args()
       
       Serial.println("Tiene argumentos en la solicitud");
 
-      for(int i=0;i<4;i++){
+      for(int i=0;i<3;i++){
  
         AsyncWebParameter* param = request->getParam(i);
     
@@ -125,148 +68,39 @@ void urls(void){
         
         Serial.printf("%s = %s\n",param->name(), param->value());
 
-        convertirParametrosRecibidos(param->name(), param->value(), &pin, &valor);
-
-
-//        valor = 1;
-  //      pin = 2;
-
-
-        if(request->hasArg("GPIO1")){//si es escritura
-
-          if(valor == 1){
-            Serial.println("valor = 1");
-            digitalWrite(pin, HIGH);  
-          }
-          if(valor == 0){
-            digitalWrite(pin, LOW);
-            Serial.println("valor = 0");
-          }
-
+        valor = param->value().toInt();
+        if(i == 0){
+          r = valor;
         }
-
-        if(request->hasArg("GPIO19")){//si es lectura
-
-          
-            Serial.println("Lectura");
-            digitalRead(pin);  
-          
-
+        if(i == 1){
+          g = valor;
+        }
+        if(i == 2){
+          b = valor;
         }
         
-        //digitalWrite(2, HIGH);
-
-
       }
       
     }
 
-    request->send(SPIFFS, "/ESP32.html", "text/html");
-
+    request->send(SPIFFS, "/cambiarColoresRGB.html", "text/html");
+    
   });
 
 
-  server.on("/interactuarConESP32", HTTP_ANY, [](AsyncWebServerRequest *request){
 
-    Serial.println("/interactuarConESP32");
+  server.on("/encenderRuletaRGB", HTTP_GET, [](AsyncWebServerRequest *request){
 
-    if(request->hasArg("fname")){
-      
-      Serial.println("Tiene argumentos en la solicitud");
-
-      for(int i=0;i<2;i++){
- 
-      AsyncWebParameter* param = request->getParam(i);
-  
-      Serial.print("Param name: ");
-      Serial.println(param->name());
-  
-      Serial.print("Param value: ");
-      Serial.println(param->value());
-  
-      Serial.println("------");
-
-      if(param->value() == "LED_ON"){
-
-          Serial.println("LED_ON");
-          digitalWrite(LED_BUILTIN, HIGH);
-
-      }
-      if(param->value() == "LED_OFF"){
-
-          Serial.println("LED_OFF");
-          digitalWrite(LED_BUILTIN, LOW);
-
-      }
-    }
-    //String param1;
-
-    //param1 = request->getParam().value();
-
-
-    //request->send(SPIFFS, "/ESP32.html", "text/html");
-
-
-    }
-
-/*
-    for(int i=0;i<2;i++){
- 
-     AsyncWebParameter* param = request->getParam(i);
- 
-     Serial.print("Param name: ");
-     Serial.println(param->name());
- 
-     Serial.print("Param value: ");
-     Serial.println(param->value());
- 
-     Serial.println("------");
-
-     if(param->value() == "LED_ON"){
-
-        Serial.println("LED_ON");
-        digitalWrite(LED_BUILTIN, HIGH);
-
-     }
-     if(param->value() == "LED_OFF"){
-
-        Serial.println("LED_OFF");
-        digitalWrite(LED_BUILTIN, LOW);
-
-     }
-    }
-    //String param1;
-
-    //param1 = request->getParam().value();
-
-
-    //request->send(SPIFFS, "/ESP32.html", "text/html");
-    */
-    request->send(SPIFFS, "/interactuarConESP32.html", "text/html");
-    //request->send(SPIFFS, "/ESP32.html", "text/html");
-  });
-
-  server.on("/consultarEntradasESP32", HTTP_ANY, [](AsyncWebServerRequest *request){
-
-    int pin = 1;
-    int lecturaPin;
-
-    Serial.println("consultarEntradasESP32");
-    Serial.println("Lectura");
-    //lecturaPin = digitalRead(pin);  
-    lecturaPin = analogRead(pin);  
-    Serial.println(lecturaPin);
-
-    request->send(200, "text/html", (String)lecturaPin);
-
+    Serial.println("Encender Ruleta");
+    encenderRuleta = true;
+    
+    request->send(SPIFFS, "/index.html", "text/html");
 
   });
-
-
 
 }
 
-  void notFound(AsyncWebServerRequest *request) { //rutina de atención para páginas solicitadas no definidas 
+void notFound(AsyncWebServerRequest *request) { //rutina de atención para páginas solicitadas no definidas 
       //pathDirectory = ""; //resetea el directorio para una nueva navegación
     
     Serial.print("URL = ");
@@ -304,10 +138,6 @@ void convertirParametrosRecibidos(String paramName, String paramValue, int *pin,
   }
 
   Serial.printf("%i\n", *valor);
-
-
-
-
 
 }
 
